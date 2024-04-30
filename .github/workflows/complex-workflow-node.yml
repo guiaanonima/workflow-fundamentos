@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+env: 
+  NODE_VERSION: '14'
+  ARTIFACT_NAME: 'build-artifact'
+
 jobs: 
   test:
     runs-on: ubuntu-latest
@@ -15,7 +19,9 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: ${{ env.NODE_VERSION }}
+      env:
+        PROJECT_NAME: workflow-project-example
 
     - name: Install dependencies
       run: npm install
@@ -32,7 +38,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: ${{ env.NODE_VERSION }}
 
     - name: Install dependencies
       run: npm install
@@ -43,22 +49,20 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifacts@v2
       with: 
-        name: build-artifacts
+        name: ${{ env.ARTIFACT_NAME }}
         path: ./build
     
   deploy:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
     - name: Download build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
-        name: build-artifacts
+        name: ${{ env.ARTIFACT_NAME }}
 
     - name: Setup AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
