@@ -10,7 +10,7 @@ jobs:
         id: hello-world
         uses: guiaanonima/workflow-fundamentos@main
         with:
-          my-input: world
+          my-input: ${{ secrets.API_KEY }}
 
       - name: print output
         run: echo $OUTPUT_FROM_HELLO
